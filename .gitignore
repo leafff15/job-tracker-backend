@@ -31,3 +31,4 @@ Thumbs.db
 
 # Prisma
 # Keep prisma/schema.prisma and migrations tracked
+/src/generated/prisma
