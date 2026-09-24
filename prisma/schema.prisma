@@ -22,7 +22,7 @@ model status {
   user_id     Int
   status_name String @db.VarChar(50)
 
-  user             user              @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  user        user   @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   job_applications job_application[]
 
   @@unique([user_id, status_name])
@@ -30,7 +30,7 @@ model status {
 
 model work_setup {
   work_setup_id   Int    @id @default(autoincrement())
-  work_setup_name String @db.VarChar(50)
+  work_setup_name String @unique @db.VarChar(50)
 
   job_applications job_application[]
 }
