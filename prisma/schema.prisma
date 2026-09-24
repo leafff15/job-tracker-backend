@@ -7,13 +7,50 @@ datasource db {
   provider = "postgresql"
 }
 
+model user {
+  user_id       Int    @id @default(autoincrement())
+  username      String @db.VarChar(100)
+  password_hash String @db.VarChar(255)
+  email         String @unique @db.VarChar(255)
+
+  job_applications job_application[]
+  statuses status[]
+}
+
+model status {
+  status_id   Int    @id @default(autoincrement())
+  user_id     Int
+  status_name String @db.VarChar(50)
+
+  user             user              @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  job_applications job_application[]
+
+  @@unique([user_id, status_name])
+}
+
+model work_setup {
+  work_setup_id   Int    @id @default(autoincrement())
+  work_setup_name String @db.VarChar(50)
+
+  job_applications job_application[]
+}
+
 model job_application {
-  application_id Int       @id @default(autoincrement())
-  status_id      Int?
+  application_id Int      @id @default(autoincrement())
+  user_id        Int
+  status_id      Int
+  work_setup_id  Int
   company_name   String   @db.VarChar(255)
   position       String   @db.VarChar(255)
-  work_setup     String   @db.VarChar(50)
   date_applied   DateTime @db.Date
-  salary         Int
+  salary         Int?
   location       String   @db.VarChar(255)
+  notes          String?  @db.VarChar(1000)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user       user       @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  status     status     @relation(fields: [status_id], references: [status_id])
+  work_setup work_setup @relation(fields: [work_setup_id], references: [work_setup_id])
 }
