@@ -77,10 +77,10 @@ Client → Route → Controller → Service → Repository → Prisma → Postgr
 
 ## Data Model
 
-- **user** — account owning job applications and statuses
-- **status** — user-defined application statuses (e.g. Applied, Interviewing, Offer, Rejected)
-- **work_setup** — shared list of work arrangements (On-site, Hybrid, Remote)
-- **job_application** — the core entity, linked to a user, a status, and a work setup
+- **user** - account owning job applications and statuses
+- **status** - user-defined application statuses (e.g. Applied, Interviewing, Offer, Rejected)
+- **work_setup** - shared list of work arrangements (On-site, Hybrid, Remote)
+- **job_application** - the core entity, linked to a user, a status, and a work setup
 
 See `prisma/schema.prisma` for the full schema and relations.
 
