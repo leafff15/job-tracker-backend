@@ -1,19 +1,8 @@
 import "dotenv/config";
+import app from "./app.js";
 
-import express from "express";
-
-const app = express();
 const port = Number(process.env.PORT) || 3000;
-
-app.use(express.json());
-
-app.get("/health", (_req, res) => {
-  res.status(200).json({ status: "ok" });
-});
-
-const server = app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
+const server = app.listen(port, () => console.log(`Server listening on port ${port}`));
 
 function shutdown(signal: NodeJS.Signals) {
   console.log(`${signal} received; closing server`);
