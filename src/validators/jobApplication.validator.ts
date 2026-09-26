@@ -3,9 +3,9 @@ import type { NextFunction, Request, Response } from "express";
 export class ValidationError extends Error {}
 
 const requiredStrings = ["company_name", "position", "location"] as const;
-const requiredNumbers = ["user_id", "status_id", "work_setup_id"] as const;
+const requiredNumbers = ["status_id", "work_setup_id"] as const;
 const allowedFields = new Set([
-  ...requiredStrings, ...requiredNumbers, "date_applied", "salary", "notes",
+  ...requiredStrings, ...requiredNumbers, "user_id", "date_applied", "salary", "notes",
 ]);
 
 type JobApplicationBody = Record<string, unknown>;
@@ -19,6 +19,7 @@ function validateBody(input: unknown, creating: boolean): JobApplicationBody {
   for (const key of Object.keys(body)) {
     if (!allowedFields.has(key)) throw new ValidationError(`Unknown field: ${key}`);
   }
+  delete body.user_id;
   if (creating) {
     for (const key of [...requiredStrings, ...requiredNumbers, "date_applied"]) {
       if (body[key] === undefined || body[key] === null || body[key] === "") {
