@@ -53,4 +53,6 @@ model job_application {
   user       user       @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   status     status     @relation(fields: [status_id], references: [status_id])
   work_setup work_setup @relation(fields: [work_setup_id], references: [work_setup_id])
+
+  @@index([user_id])
 }

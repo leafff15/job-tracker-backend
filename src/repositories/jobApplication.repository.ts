@@ -16,9 +16,23 @@ export type JobApplicationInput = {
 export class JobApplicationRepository {
   constructor(private readonly db: PrismaClient = prisma) {}
 
-  findAll() { return this.db.job_application.findMany({ orderBy: { created_at: "desc" } }); }
-  findById(applicationId: number) {
-    return this.db.job_application.findUnique({ where: { application_id: applicationId } });
+  findAll(userId: number) {
+    return this.db.job_application.findMany({
+      where: {
+        user_id: userId,
+      },
+      orderBy: {
+        created_at: "desc",
+      },
+    });
+  }
+  findById(applicationId: number, userId: number) {
+    return this.db.job_application.findFirst({
+      where: {
+        application_id: applicationId,
+        user_id: userId,
+      },
+    });
   }
   create(data: JobApplicationInput) { return this.db.job_application.create({ data }); }
   update(applicationId: number, data: Partial<JobApplicationInput>) {

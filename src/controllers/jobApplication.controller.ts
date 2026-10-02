@@ -1,7 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { JobApplicationService } from "../services/jobApplication.service.js";
-import { NotFoundError } from "../services/errors.js";
-import { ValidationError } from "../validators/jobApplication.validator.js";
+import { successResponse } from "../utils/api-response.js";
 
 export class JobApplicationController {
   constructor(private readonly service = new JobApplicationService()) {}
@@ -14,30 +13,49 @@ export class JobApplicationController {
   };
   get = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const application = await this.service.get(res.locals.applicationId as number);
-      if (application.user_id !== req.user.user_id) throw new NotFoundError("Job application not found");
-      res.json(application);
-    } catch (error) { next(error); }
+      const applicationId = res.locals.applicationId as number;
+
+      const application = await this.service.get(
+        applicationId,
+        req.user.user_id,
+      );
+
+      res.json(successResponse(application));
+    } catch (error) {
+      next(error);
+    }
   };
   create = async (req: Request, res: Response, next: NextFunction) => {
-    try { res.status(201).json(await this.service.create({ ...req.body, user_id: req.user.user_id })); } catch (error) { next(error); }
+    try {
+      res.status(201).json(
+        successResponse(
+          await this.service.create(req.user.user_id, req.body)
+        ),
+      );
+    } catch (error) {
+      next(error);
+    }
   };
   update = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const applicationId = res.locals.applicationId as number;
-      const application = await this.service.get(applicationId);
-      if (application.user_id !== req.user.user_id) throw new NotFoundError("Job application not found");
-      res.json(await this.service.update(applicationId, { ...req.body, user_id: req.user.user_id }));
-    } catch (error) { next(error); }
+      res.json(
+        successResponse(
+          await this.service.update(applicationId, req.user.user_id, req.body),
+        ),
+      );
+    } catch (error) {
+      next(error);
+    }
   };
   remove = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const applicationId = res.locals.applicationId as number;
-      const application = await this.service.get(applicationId);
-      if (application.user_id !== req.user.user_id) throw new NotFoundError("Job application not found");
-      await this.service.remove(applicationId);
+      await this.service.remove(applicationId, req.user.user_id);
       res.status(204).end();
-    } catch (error) { next(error); }
+    } catch (error) {
+      next(error);
+    }
   };
 }
 
