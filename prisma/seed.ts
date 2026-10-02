@@ -1,14 +1,13 @@
 import "dotenv/config";
 import { PrismaClient } from "../src/generated/prisma/client.js";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { defaultStatuses } from "../src/config/defaults.js";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
 });
 
 const prisma = new PrismaClient({ adapter });
-
-const defaultStatuses = ["Applied", "Interviewing", "Offer", "Rejected"];
 
 async function main() {
   const workSetups = ["On-site", "Hybrid", "Remote"];

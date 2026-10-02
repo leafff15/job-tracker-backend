@@ -7,12 +7,9 @@ export class JobApplicationController {
 
   list = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const applications = await this.service.list(req.user.user_id);
-
-      res.json(successResponse(applications));
-    } catch (error) {
-      next(error);
-    }
+      const applications = await this.service.list();
+      res.json(applications.filter((application: { user_id: number }) => application.user_id === req.user.user_id));
+    } catch (error) { next(error); }
   };
   get = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -62,44 +59,15 @@ export class JobApplicationController {
   };
 }
 
-// export function jobApplicationErrorHandler(
-//   error: unknown,
-//   _req: Request,
-//   res: Response,
-//   _next: NextFunction,
-// ) {
-//   if (error instanceof ValidationError) {
-//     return res
-//       .status(400)
-//       .json(errorResponse("VALIDATION_ERROR", error.message));
-//   }
-//   if (error instanceof NotFoundError) {
-//     return res.status(404).json(errorResponse("NOT_FOUND", error.message));
-//   }
-//   const parserError = error as { type?: string; status?: number } | null;
-//   if (
-//     parserError?.type === "entity.parse.failed" ||
-//     (error instanceof SyntaxError && parserError?.status === 400)
-//   ) {
-//     return res
-//       .status(400)
-//       .json(errorResponse("INVALID_JSON", "Invalid JSON request body"));
-//   }
-//   const code = (error as { code?: string } | null)?.code;
-//   if (code === "P2025")
-//     return res
-//       .status(404)
-//       .json(errorResponse("NOT_FOUND", "Job application not found"));
-//   if (code === "P2003" || code === "P2002")
-//     return res
-//       .status(400)
-//       .json(
-//         errorResponse(
-//           "INVALID_INPUT",
-//           "Related record is invalid or already exists",
-//         ),
-//       );
-//   return res
-//     .status(500)
-//     .json(errorResponse("INTERNAL_SERVER_ERROR", "Internal server error"));
-// }
+export function jobApplicationErrorHandler(error: unknown, _req: Request, res: Response, _next: NextFunction) {
+  if (error instanceof ValidationError) return res.status(400).json({ error: error.message });
+  if (error instanceof NotFoundError) return res.status(404).json({ error: error.message });
+  const parserError = error as { type?: string; status?: number } | null;
+  if (parserError?.type === "entity.parse.failed" || (error instanceof SyntaxError && parserError?.status === 400)) {
+    return res.status(400).json({ error: "Invalid JSON request body" });
+  }
+  const code = (error as { code?: string } | null)?.code;
+  if (code === "P2025") return res.status(404).json({ error: "Job application not found" });
+  if (code === "P2003" || code === "P2002") return res.status(400).json({ error: "Related record is invalid or already exists" });
+  return res.status(500).json({ error: "Internal server error" });
+}
