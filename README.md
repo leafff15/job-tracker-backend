@@ -45,7 +45,7 @@ A REST API for managing job applications, built with Express, TypeScript, Prisma
 
 ## Authentication
 
-Register or log in to receive an HTTP-only `token` cookie. Send that cookie with requests to `/api/job-applications`. The cookie is marked `Secure` when `NODE_ENV=production` and uses `SameSite=Strict`.
+Register or log in to receive an HTTP-only `token` cookie. Registration also creates the default statuses `Applied`, `Interviewing`, `Offer`, and `Rejected`. Send the cookie with requests to protected endpoints. The cookie is marked `Secure` when `NODE_ENV=production` and uses `SameSite=Strict`.
 
 ### `POST /api/auth/register`
 
@@ -58,6 +58,22 @@ Sets the auth cookie and returns the public user fields. Invalid credentials ret
 ### `POST /api/auth/logout`
 
 Clears the auth cookie and returns `{ "message": "Logged out" }`.
+
+### `GET /api/auth/me`
+
+Requires the auth cookie. Returns `200` with the authenticated user: `{ "user": { "user_id": 1, "username": "Alex", "email": "alex@example.com" } }`. Returns `401` with `{ "error": "Authentication required" }` when the account no longer exists.
+
+## Reference data endpoints
+
+All endpoints below require the auth cookie.
+
+### `GET /api/statuses`
+
+Returns the authenticated user's statuses, ordered by `status_id`: `[{ "status_id": 1, "status_name": "Applied" }]`.
+
+### `GET /api/work-setups`
+
+Returns all work setups, ordered by `work_setup_id`: `[{ "work_setup_id": 1, "work_setup_name": "On-site" }]`.
 
 ## Job application endpoints
 

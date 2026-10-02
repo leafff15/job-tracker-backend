@@ -1,0 +1,1 @@
+export const defaultStatuses = ["Applied", "Interviewing", "Offer", "Rejected"] as const;

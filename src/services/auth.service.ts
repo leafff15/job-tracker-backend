@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { UserRepository } from "../repositories/user.repository.js";
 import { ValidationError } from "../validators/jobApplication.validator.js";
+import { defaultStatuses } from "../config/defaults.js";
 
 const passwordMinimumLength = 8;
 
@@ -33,9 +34,11 @@ export class AuthService {
     const email = validateEmail(data.email);
     const password = validatePassword(data.password);
     if (await this.users.findByEmail(email)) throw new ValidationError("email is already registered");
-    const user = await this.users.create({ username, email, password_hash: await bcrypt.hash(password, 12) });
+    const user = await this.users.create({ username, email, password_hash: await bcrypt.hash(password, 12) }, defaultStatuses);
     return { user, token: this.createToken(user.user_id) };
   }
+
+  findById(userId: number) { return this.users.findById(userId); }
 
   async login(input: unknown) {
     if (!input || typeof input !== "object" || Array.isArray(input)) throw new ValidationError("Request body must be a JSON object");

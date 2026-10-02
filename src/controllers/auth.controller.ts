@@ -33,6 +33,17 @@ export class AuthController {
     }
   };
 
+  me = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user = await this.auth.findById(req.user.user_id);
+      if (!user) {
+        res.clearCookie("token", cookieOptions);
+        return res.status(401).json({ error: "Authentication required" });
+      }
+      res.json({ user });
+    } catch (error) { next(error); }
+  };
+
   logout = (_req: Request, res: Response) => {
     res.clearCookie("token", cookieOptions);
     res.status(200).json({ message: "Logged out" });

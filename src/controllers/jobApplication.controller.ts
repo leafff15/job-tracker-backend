@@ -9,7 +9,7 @@ export class JobApplicationController {
   list = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const applications = await this.service.list();
-      res.json(applications.filter((application) => application.user_id === req.user.user_id));
+      res.json(applications.filter((application: { user_id: number }) => application.user_id === req.user.user_id));
     } catch (error) { next(error); }
   };
   get = async (req: Request, res: Response, next: NextFunction) => {

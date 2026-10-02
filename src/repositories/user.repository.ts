@@ -8,7 +8,16 @@ export class UserRepository {
     return this.db.user.findUnique({ where: { email } });
   }
 
-  create(data: { username: string; email: string; password_hash: string }) {
-    return this.db.user.create({ data });
+  findById(userId: number) {
+    return this.db.user.findUnique({
+      where: { user_id: userId },
+      select: { user_id: true, username: true, email: true },
+    });
+  }
+
+  create(data: { username: string; email: string; password_hash: string }, statuses: readonly string[]) {
+    return this.db.user.create({
+      data: { ...data, statuses: { create: statuses.map((status_name) => ({ status_name })) } },
+    });
   }
 }
