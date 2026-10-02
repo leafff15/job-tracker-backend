@@ -10,6 +10,9 @@ export class StatusRepository {
         status_id: statusId,
         user_id: userId,
       },
+    });
+  }
+      
   findByUserId(userId: number) {
     return this.db.status.findMany({
       where: { user_id: userId },
