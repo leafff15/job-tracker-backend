@@ -50,7 +50,8 @@ export function errorHandler(
   }
 
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
-    if (error.code === "P2025") {
+    const prismaError = error as Prisma.PrismaClientKnownRequestError;
+    if (prismaError.code === "P2025") {
       return res
         .status(404)
         .json(
@@ -61,7 +62,7 @@ export function errorHandler(
         );
     }
 
-    if (error.code === "P2003") {
+    if (prismaError.code === "P2003") {
       return res
         .status(400)
         .json(
@@ -72,7 +73,7 @@ export function errorHandler(
         );
     }
 
-    if (error.code === "P2002") {
+    if (prismaError.code === "P2002") {
       return res
         .status(409)
         .json(

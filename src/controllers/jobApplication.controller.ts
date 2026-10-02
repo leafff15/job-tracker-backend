@@ -1,14 +1,16 @@
 import type { Request, Response, NextFunction } from "express";
 import { JobApplicationService } from "../services/jobApplication.service.js";
+import { NotFoundError } from "../services/errors.js";
 import { successResponse } from "../utils/api-response.js";
+import { ValidationError } from "../validators/jobApplication.validator.js";
 
 export class JobApplicationController {
   constructor(private readonly service = new JobApplicationService()) {}
 
   list = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const applications = await this.service.list();
-      res.json(applications.filter((application: { user_id: number }) => application.user_id === req.user.user_id));
+      const applications = await this.service.list(req.user.user_id);
+      res.json(applications);
     } catch (error) { next(error); }
   };
   get = async (req: Request, res: Response, next: NextFunction) => {

@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 import { UserRepository } from "../repositories/user.repository.js";
 import { ValidationError } from "../validators/jobApplication.validator.js";
 import { defaultStatuses } from "../config/defaults.js";
+import { env } from "../config/env.js";
+import { UnauthorizedError } from "./errors.js";
 
 const passwordMinimumLength = 8;
 
