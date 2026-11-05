@@ -2,7 +2,6 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import helmet from "helmet";
-import { jobApplicationErrorHandler } from "./controllers/jobApplication.controller.js";
 import { createJobApplicationRouter } from "./routes/jobApplication.routes.js";
 import { createAuthRouter } from "./routes/auth.routes.js";
 import { createStatusRouter } from "./routes/status.routes.js";
@@ -32,7 +31,6 @@ export function createApp(router = createJobApplicationRouter()) {
   app.use("/api/work-setups", authenticate, createWorkSetupRouter());
   app.use("/api/job-applications", authenticate, router);
 
-  app.use(jobApplicationErrorHandler);
   app.use(errorHandler);
 
   return app;

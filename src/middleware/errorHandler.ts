@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { Prisma } from "../generated/prisma/client.js";
 import { ValidationError } from "../validators/jobApplication.validator.js";
-import { NotFoundError, UnauthorizedError } from "../services/errors.js";
+import {   NotFoundError, RegistrationClosedError, UnauthorizedError, } from "../services/errors.js";
 import { errorResponse } from "../utils/api-response.js";
 import { logger } from "../utils/logger.js";
 
@@ -11,6 +11,7 @@ export function errorHandler(
   res: Response,
   _next: NextFunction,
 ) {
+
   if (error instanceof ValidationError) {
     return res
       .status(400)
@@ -21,9 +22,14 @@ export function errorHandler(
     return res.status(401).json(errorResponse(error.code, error.message));
   }
 
+  if (error instanceof RegistrationClosedError) {
+    return res.status(403).json(errorResponse("REGISTRATION_CLOSED", error.message));
+  }
+
   if (error instanceof NotFoundError) {
     return res.status(404).json(errorResponse("NOT_FOUND", error.message));
   }
+
 
   const parserError = error as {
     type?: string;
@@ -88,6 +94,8 @@ export function errorHandler(
   logger.error("Unhandled error", {
     error,
   });
+
+  
 
   return res
     .status(500)
